@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OTP Verification</title>
+</head>
+<body>
+    <h1>OTP Verification</h1>
+    <form id="otpForm">
+        <label for="otp">OTP:</label>
+        <input type="text" id="otp" maxlength="6" required>
+        <input type="hidden" id="name" name="name" value="{{name}}">
+        <input type="hidden" id="email" name="email" value="{{email}}">
+        <input type="hidden" id="mobile" name="mobile" value="{{mobile}}">
+        <input type="hidden" id="districtd" name="districtd" value="{{district}}">
+        <button type="submit">Submit</button>
+    </form>
+    <p id="resultMessage"></p>
+
+    <script>
+            document.getElementById("otpForm").addEventListener("submit", function(event) {
+                event.preventDefault(); // Prevent form submission
+    
+                // Get the user input for OTP
+                const otpInput = document.getElementById('otp').value;
+    
+                // Prepare the API request data
+                const data = {
+                    "otp_received": otpInput,
+                    "user_id": "{{email}}",
+                    "prereg_name": "{{name}}",
+                    "prereg_email": "{{email}}",
+                    "prereg_mob": "{{mobile}}",
+                    "districtd": 1
+                };
+    
+                // Create a new XMLHttpRequest object
+                const xhr = new XMLHttpRequest();
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                // Set up the event listener for when the response is received
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+    
+                        // Handle the API response
+                        if (response.Success === "1") {
+                            // OTP verification was successful
+                            document.getElementById("resultMessage").textContent = "OTP Verified Successfully.";
+                        } else {
+                            // OTP verification was unsuccessful
+                            document.getElementById("resultMessage").textContent = "Enter the correct OTP.";
+                        }
+                    } else {
+                        // Handle any errors that occurred during the API request
+                        console.error("Error:", xhr.statusText);
+                        document.getElementById("resultMessage").textContent = "Error occurred. Please try again later.";
+                    }
+                };
+    
+                // Set up the event listener for when an error occurred during the request
+                xhr.onerror = function() {
+                    console.error("Error:", xhr.statusText);
+                    document.getElementById("resultMessage").textContent = "Error occurred. Please try again later.";
+                };
+    
+                // Open the request and set the URL and method
+                xhr.open("POST", "https://dev.yip.kerala.gov.in/yipapp/index.php/Com_mobile_otp/checkotp", true);
+    
+                // Set the request headers
+                xhr.setRequestHeader("Content-Type", "application/json");
+    
+                // Send the request with the JSON data
+                xhr.send(JSON.stringify(data));
+            });
+    </script>
+</body>
+</html>
