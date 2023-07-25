@@ -96,8 +96,8 @@ def api_check_otp_view(request):
                 if api_response["Success"]== "1":
                     
                     if create_user_with_random_password(prereg_email):
-                        if PreRegister.objects.filter(prereg_mob=prereg_mob).exists():
-                            ob=PreRegister.objects.get(prereg_mob=prereg_mob)
+                        if PreRegister.objects.filter(prereg_email=prereg_email).exists():
+                            ob=PreRegister.objects.get(prereg_email=prereg_email)
                         else:
                             ob=PreRegister()
                             ob.prereg_mob=prereg_mob
@@ -142,7 +142,7 @@ def update_data_view(request):
                 'ideator_mobile': prereg_data.prereg_mob,
                 'districtd': prereg_data.districtd,
             }
-
+        
         form = UpdateForm(initial=initial_data)
 
     return render(request, 'update_form.html', {'form': form})
